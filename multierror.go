@@ -83,7 +83,7 @@ func (e *Error) WrappedErrors() []error {
 	return e.Errors
 }
 
-// AppensSafe appends multiple errors in the current Error instance
+// AppendSafe appends multiple errors in the current Error instance
 // It is thread-safe and can be used in concurrent environments
 func (e *Error) AppendSafe(errs ...error) {
 	e.m.Lock()
