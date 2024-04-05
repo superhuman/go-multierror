@@ -1,13 +1,5 @@
 package multierror
 
-import "sync"
-
-// This mutex is used to protect the Append function from concurrent
-// writes. This is necessary because the Append function is not
-// thread-safe.
-// TODO: add a mutex by error
-var m sync.Mutex
-
 // Append is a helper function that will append more errors
 // onto an Error in order to create a larger multi-error.
 //
@@ -15,9 +7,6 @@ var m sync.Mutex
 // one. If any of the errs are multierr.Error, they will be flattened
 // one level into err.
 func Append(err error, errs ...error) *Error {
-	m.Lock()
-	defer m.Unlock()
-
 	switch err := err.(type) {
 	case *Error:
 		// Typed nils can reach here, so initialize if we are nil

@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sync"
 )
 
 // Error is an error type to track multiple errors. This is used to
 // accumulate errors in cases and return them as a single "error".
 type Error struct {
+	m sync.Mutex
+
 	Errors      []error
 	ErrorFormat ErrorFormatFunc
 }
@@ -78,4 +81,13 @@ func (e *Error) GoString() string {
 // satisfy the errwrap.Wrapper interface.
 func (e *Error) WrappedErrors() []error {
 	return e.Errors
+}
+
+// AppensSafe appends multiple errors in the current Error instance
+// It is thread-safe and can be used in concurrent environments
+func (e *Error) AppendSafe(errs ...error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+
+	e = Append(e, errs...)
 }
